@@ -1,0 +1,30 @@
+{
+  "name": "backstagesystem",
+  "version": "1.0.0",
+  "description": "restful api",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlphaMasterLW/backstageSystem.git"
+  },
+  "keywords": [
+    "vue",
+    "node",
+    "elementUI"
+  ],
+  "author": "liwei",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlphaMasterLW/backstageSystem/issues"
+  },
+  "homepage": "https://github.com/AlphaMasterLW/backstageSystem#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.9.2"
+  }
+}
