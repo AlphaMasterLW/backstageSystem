@@ -5,6 +5,7 @@ const router = express.Router();
 
 const User = require('../../models/User');
 const bcrypt = require('bcrypt');
+const gravatar = require('gravatar');
 
 /**
  * $route GET api/users/test
@@ -30,13 +31,15 @@ router.post('/register', function (req, res) {
         if(user){
             return res.status(400).json({email: "邮箱已被注册"})
         }else{
+            const avatar = gravatar.url(req.body.email, {s: '200', r: 'pg', d: 'mm'});
             const newUser = new User({
                 name: req.body.name,
                 email: req.body.email,
+                avatar: avatar,
                 password: req.body.password
             })
             bcrypt.genSalt(10, function(err, salt) {
-                bcrypt.hash(newUser.password, salt, (err, hash) => {
+                bcrypt.hash(newUser.password, salt, function(err, hash){
                     // Store hash in your password DB.
                     if(err) throw err;
                     newUser.password = hash;
