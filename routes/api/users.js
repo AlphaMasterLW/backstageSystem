@@ -6,6 +6,8 @@ const router = express.Router();
 const User = require('../../models/User');
 const bcrypt = require('bcrypt');
 const gravatar = require('gravatar');
+const jwt = require('jsonwebtoken');
+const keys = require('../../config/keys');
 
 /**
  * $route GET api/users/test
@@ -72,8 +74,16 @@ router.post('/login', (req, res) => {
                     // result == true
                     if(err) throw err;
                     if(result){
-                        return res.status(200).json({
-                            "msg": "登录成功"
+                        let rule = {
+                            id: user.id,
+                            name: user.name
+                        }
+                        // jwt.sign('规则','加密名字','参数',callback)
+                        jwt.sign(rule, keys.secretOrKey, { expiresIn: '7d' }, (err, token) => {
+                            res.status(200).json({
+                                success: true,
+                                token: "liwei_" + token
+                            })
                         })
                     }else {
                         return res.status(200).json({
