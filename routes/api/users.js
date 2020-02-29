@@ -7,6 +7,7 @@ const User = require('../../models/User');
 const bcrypt = require('bcrypt');
 const gravatar = require('gravatar');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const keys = require('../../config/keys');
 
 /**
@@ -39,7 +40,7 @@ router.post('/register', function (req, res) {
                 email: req.body.email,
                 avatar: avatar,
                 password: req.body.password
-            })
+            });
             bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(newUser.password, salt, function(err, hash){
                     // Store hash in your password DB.
@@ -77,12 +78,12 @@ router.post('/login', (req, res) => {
                         let rule = {
                             id: user.id,
                             name: user.name
-                        }
+                        };
                         // jwt.sign('规则','加密名字','参数',callback)
                         jwt.sign(rule, keys.secretOrKey, { expiresIn: '7d' }, (err, token) => {
                             res.status(200).json({
                                 success: true,
-                                token: "liwei_" + token
+                                token: "Bearer " + token
                             })
                         })
                     }else {
@@ -93,6 +94,19 @@ router.post('/login', (req, res) => {
                 });
             }
         })
+})
+
+/**
+ * $route GET api/users/current
+ * @desc 返回 user
+ * @access private
+ */
+router.get('/current', passport.authenticate('jwt', { session: false }),(req, res) => {
+    res.json({
+        id:req.user.id,
+        name:req.user.name,
+        email:req.user.email
+    });
 })
 
 module.exports = router;

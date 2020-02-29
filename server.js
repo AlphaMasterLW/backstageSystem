@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
-
+const passport = require('passport');
 // 引入user.js
 const users = require('./routes/api/users');
 
@@ -26,7 +26,9 @@ const port = process.env.PORT || 3000;
 // 使用body-parser中间件
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-
+// 使用passport
+app.use(passport.initialize());
+require('./config/passport')(passport);
 
 // 使用routes
 app.use('/api/users', users);
