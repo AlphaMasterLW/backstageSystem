@@ -32,13 +32,14 @@ router.post('/register', function (req, res) {
         email: req.body.email
     }).then((user) => {
         if(user){
-            return res.status(400).json({email: "邮箱已被注册"})
+            return res.status(400).json("邮箱已被注册")
         }else{
             const avatar = gravatar.url(req.body.email, {s: '200', r: 'pg', d: 'mm'});
             const newUser = new User({
                 name: req.body.name,
                 email: req.body.email,
                 avatar: avatar,
+                identity: req.body.identity,
                 password: req.body.password
             });
             bcrypt.genSalt(10, function(err, salt) {
@@ -66,9 +67,7 @@ router.post('/login', (req, res) => {
     User.findOne({email: email})
         .then(user => {
             if(!user){
-                return res.status(404).json({
-                    "email": "用户不存在"
-                })
+                return res.status(404).json("用户不存在")
             }else{
                 // 密码匹配
                 bcrypt.compare(password, user.password, function(err, result) {
@@ -77,7 +76,9 @@ router.post('/login', (req, res) => {
                     if(result){
                         let rule = {
                             id: user.id,
-                            name: user.name
+                            name: user.name,
+                            avatar:user.avatar,
+                            identity: user.identity
                         };
                         // jwt.sign('规则','加密名字','参数',callback)
                         jwt.sign(rule, keys.secretOrKey, { expiresIn: '7d' }, (err, token) => {
@@ -87,9 +88,7 @@ router.post('/login', (req, res) => {
                             })
                         })
                     }else {
-                        return res.status(200).json({
-                            "msg": "密码错误"
-                        })
+                        return res.status(200).json("密码错误")
                     }
                 });
             }
@@ -105,7 +104,8 @@ router.get('/current', passport.authenticate('jwt', { session: false }),(req, re
     res.json({
         id:req.user.id,
         name:req.user.name,
-        email:req.user.email
+        email:req.user.email,
+        identity: req.user.identity
     });
 })
 
