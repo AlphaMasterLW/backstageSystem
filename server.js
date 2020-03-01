@@ -6,6 +6,7 @@ const app = express();
 const passport = require('passport');
 // 引入user.js
 const users = require('./routes/api/users');
+const profile = require('./routes/api/profile');
 
 // DB config
 const db = require('./config/keys').mongoURI;
@@ -32,6 +33,7 @@ require('./config/passport')(passport);
 
 // 使用routes
 app.use('/api/users', users);
+app.use('/api/profile', profile);
 
 app.get('/', (req, res) => res.send('Hello World a2!'));
 
