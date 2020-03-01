@@ -10,7 +10,7 @@ const Profile = require('../../models/Profile')
  * @access private
  */
 router.post('/add', passport.authenticate('jwt', { session: false }), (req, res) => {
-    const profileFields = {}
+    let profileFields = {};
     profileFields.type = req.body.type ? req.body.type : null;
     profileFields.describe = req.body.describe ? req.body.describe : null;
     profileFields.income = req.body.income ? req.body.income : null;
@@ -51,6 +51,43 @@ router.get('/:id',  passport.authenticate('jwt', { session: false }), (req, res)
         }
         res.status(200).json(profile)
     }).catch(err => res.status(404).json(err))
+});
+
+/**
+ * $route POST api/profile/edit
+ * @desc 编辑信息接口
+ * @access private
+ */
+router.post('/edit/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    let profileFields = {};
+    profileFields.type = req.body.type ? req.body.type : null;
+    profileFields.describe = req.body.describe ? req.body.describe : null;
+    profileFields.income = req.body.income ? req.body.income : null;
+    profileFields.expend = req.body.expend ? req.body.expend : null;
+    profileFields.cash = req.body.cash ? req.body.cash : null;
+    profileFields.remark = req.body.remark ? req.body.remark : null;
+
+    Profile.findOneAndUpdate(
+        { _id: req.params.id},
+        {$set: profileFields},
+        {new: true}
+    ).then((profile) => {
+        res.json(profile)
+    }).catch(err => res.status(404).json('删除失败！'))
+});
+
+/**
+ * $route POST api/profile/delete
+ * @desc 删除信息接口
+ * @access private
+ */
+router.delete('/delete/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Profile.findOneAndRemove({ _id: req.params.id})
+        .then((profile) => {
+            profile.save().then( profile => {
+                res.json(profile)
+            })
+        })
 });
 
 module.exports = router;
