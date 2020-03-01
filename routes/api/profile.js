@@ -2,15 +2,24 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const Profile = require('../../models/Profile')
 
 /**
- * $route GET api/users/test
- * @desc 返回请求的json数据
- * @access public
+ * $route POST api/profile/add
+ * @desc 创建信息接口
+ * @access private
  */
-router.get('/', function (req, res) {
-    res.json({
-        "msg": "profile"
+router.post('/add',  passport.authenticate('jwt', { session: false }), (req, res) => {
+    const profileFields = {}
+    profileFields.type = req.body.type ? req.body.type : null;
+    profileFields.describe = req.body.describe ? req.body.describe : null;
+    profileFields.income = req.body.income ? req.body.income : null;
+    profileFields.expend = req.body.expend ? req.body.expend : null;
+    profileFields.cash = req.body.cash ? req.body.cash : null;
+    profileFields.remark = req.body.remark ? req.body.remark : null;
+
+    new Profile(profileFields).save().then((profile) => {
+        res.json(profile)
     })
 });
 
